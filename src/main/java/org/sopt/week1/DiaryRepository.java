@@ -19,35 +19,19 @@ public class DiaryRepository {
         storage.put(id, body);
     }
 
-    void patch(final String id, final String newBody) {
-        Long longId;
-        try {
-            longId = Long.parseLong(id);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Invalid ID format: " + id);
-        }
-
+    void patch(final Long longId, final String newBody) {
         if (storage.containsKey(longId)) {
             storage.put(longId, newBody);
         } else {
-            throw new IllegalArgumentException("No diary found with id: " + longId);
-        }
-    }
-
-    void delete(final String id) {
-        // Long타입의 id를 String 타입으로 변환
-        Long longId; // 매개변수 String으로 받은 id값을 Long타입으로 바꾼 후 저장할 변수 선언
-        try {
-            longId = Long.parseLong(id); // String으로 받은 id값을 Long타입으로 변환
-        } catch (NumberFormatException e) { // 예외발생 시 예외처리
             throw new IllegalArgumentException();
         }
-
-        if (storage.remove(longId) == null) { // longId가 존재할 경우 지우고 존재하지 않는 경우
-            throw new IllegalArgumentException(); // 예외를 반환
-        }
     }
 
+    void delete(final Long longId) {
+        if (storage.remove(longId) == null) { // longId가 존재할 경우 지우기
+            throw new IllegalArgumentException(); //  longId가 존재하지 않는 경우 예외를 반환
+        }
+    }
 
     List<Diary> findAll() {
         // (1) diaryList를 담을 자료구조
@@ -66,7 +50,4 @@ public class DiaryRepository {
         // 불러온 자료구조를 할당
         return diaryList;
     }
-
-    
-
 }
