@@ -10,6 +10,7 @@ public class DiaryRepository {
     private final Map<Long, String> storage = new ConcurrentHashMap<>();
     // Map에 Long 타입과 String타입으로 저장됨.
     private final AtomicLong numbering = new AtomicLong();
+    private final Map<Long, String> deletedDiaries = new ConcurrentHashMap<>(); // 삭제된 일기를 저장할 리스트
 
     void save(final String body) {
         // 변환 과정
@@ -28,9 +29,13 @@ public class DiaryRepository {
     }
 
     void delete(final Long longId) {
-        if (storage.remove(longId) == null) { // longId가 존재할 경우 지우기
-            throw new IllegalArgumentException(); //  longId가 존재하지 않는 경우 예외를 반환
+        String removedDiary = storage.remove(longId);
+        if (removedDiary == null) {
+            System.out.println();
+            return;  // 예외 발생 시 프로그램 종료 방지
         }
+        // 삭제된 일기를 deletedDiaries에 저장
+        deletedDiaries.put(longId, removedDiary);
     }
 
     List<Diary> findAll() {
@@ -50,4 +55,15 @@ public class DiaryRepository {
         // 불러온 자료구조를 할당
         return diaryList;
     }
+
+    void restore(final Long longId) {
+        String body = deletedDiaries.remove(longId); // 삭제된 일기 복원
+        if (body != null) {
+            storage.put(longId, body); // 원래의 스토리지에 복원
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
+
 }

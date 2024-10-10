@@ -5,6 +5,7 @@ import java.util.List;
 public class DiaryService {
     private final DiaryRepository diaryRepository = new DiaryRepository();
 
+
     void writeDiary(final String body) {
         diaryRepository.save(body);
     }
@@ -31,5 +32,18 @@ public class DiaryService {
             throw new IllegalArgumentException();
         }
         diaryRepository.delete(longId); // 변환된 Long ID를 리포지토리에 전달
+
+    }
+
+    // todo : 삭제된 내용 복구하는 기능, 기존 id와 함께 복구되도록 설정할 것 .
+    // todo : RESTORE 명령어를 통해서 복구
+    void restoreDiary(String id) {
+        Long longId;
+        try {
+            longId = Long.parseLong(id);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid ID format");
+        }
+        diaryRepository.restore(longId); // 변환된 Long ID를 Repository에 전달
     }
 }

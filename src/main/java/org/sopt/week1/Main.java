@@ -94,6 +94,11 @@ public class Main {
 
                             server.patch(inputId, inputBody);
                         }
+                        case "RESTORE" ->{
+                            ConsoleIO.printLine("복구할 id 를 입력하세요!");
+                            final String input = ConsoleIO.readLine();
+                            server.restore(input);
+                        }
                         case "FINISH" -> {
                             server.finish();
                         }
@@ -125,6 +130,7 @@ public class Main {
                     - POST : 일기 작성하기
                     - DELETE : 일기 제거하기
                     - PATCH : 일기 수정하기
+                    - RESTORE : 일기 복구하기
                     """;
 
         }
