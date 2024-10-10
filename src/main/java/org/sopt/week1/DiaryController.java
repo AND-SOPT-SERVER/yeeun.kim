@@ -24,22 +24,34 @@ public class DiaryController {
     }
 
     final void post(final String body) {
-        if(body.length() >= 30){
-            throw new IllegalArgumentException();
+        if (body.length() > 30) {
+            throw new IllegalArgumentException("일기의 내용은 최대 30자 입니다.");
         }
         diaryService.writeDiary(body);
     }
 
     final void delete(final String id) {
-        diaryService.deleteDiary(id);
+        try {
+            diaryService.deleteDiary(id);
+        } catch (IllegalArgumentException e) {
+            System.err.println("일기를 삭제할 수 없습니다.");
+        }
     }
 
     final void patch(final String id, final String newBody) {
-        diaryService.patchDiary(id, newBody);
+        try {
+            diaryService.patchDiary(id, newBody);
+        } catch (IllegalArgumentException e) {
+            System.err.println("일기를 수정할 수 없습니다.");
+        }
     }
 
-    final void restore(final String id){
-        diaryService.restoreDiary(id);
+    final void restore(final String id) {
+        try {
+            diaryService.restoreDiary(id);
+        } catch (IllegalArgumentException e) {
+            System.err.println("일기를 복구할 수 없습니다.");
+        }
     }
 
     enum Status {

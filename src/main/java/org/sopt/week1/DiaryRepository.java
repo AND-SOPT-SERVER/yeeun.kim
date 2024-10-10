@@ -31,13 +31,12 @@ public class DiaryRepository {
     void delete(final Long longId) {
         String removedDiary = storage.remove(longId);
         if (removedDiary == null) {
-            System.out.println();
-            return;  // 예외 발생 시 프로그램 종료 방지
+            throw new IllegalArgumentException("삭제할 일기가 존재하지 않습니다.");  // 예외 발생
+
         }
         // 삭제된 일기를 deletedDiaries에 저장
         deletedDiaries.put(longId, removedDiary);
     }
-
     List<Diary> findAll() {
         // (1) diaryList를 담을 자료구조
         final List<Diary> diaryList = new ArrayList<>();
