@@ -31,7 +31,7 @@ public class DiaryRepository {
     void delete(final Long longId) {
         String removedDiary = storage.remove(longId);
         if (removedDiary == null) {
-            throw new IllegalArgumentException("삭제할 일기가 존재하지 않습니다.");  // 예외 발생
+            throw new IllegalArgumentException();  // 예외 발생
 
         }
         // 삭제된 일기를 deletedDiaries에 저장

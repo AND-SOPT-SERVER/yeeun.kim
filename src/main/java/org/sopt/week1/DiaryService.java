@@ -6,6 +6,9 @@ public class DiaryService {
     private final DiaryRepository diaryRepository = new DiaryRepository();
 
     void writeDiary(final String body) {
+        if (body.length() > 30) {
+            throw new IllegalArgumentException();
+        }
         diaryRepository.save(body);
     }
 
