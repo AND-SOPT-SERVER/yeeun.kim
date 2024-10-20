@@ -37,7 +37,6 @@ public class DiaryService {
             );
         }
 
-
         return diaryList;
     }
 }
