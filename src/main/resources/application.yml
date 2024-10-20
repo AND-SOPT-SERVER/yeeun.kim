@@ -1,0 +1,14 @@
+spring:
+    datasource:
+      drover-class-name: org.h2.Driver
+      url: jdbc:h2:mem:testdb
+      username : yeeun
+      password:
+    jpa:
+      show-sql: true
+      hibernate:
+        ddl-auto: create
+        dialect: org.hibernate.dialect.H2Dialect
+      properties:
+        format_sql: true
+        showl_sql: true
