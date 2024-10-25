@@ -1,14 +1,17 @@
-package org.sopt.Diary.service;
+package org.sopt.Diary.dto;
 
-public class Diary {
-    private long id;
+import java.time.LocalDateTime;
+
+public class DiaryResponse {
+
+    public long id;
     private String name;
 
-    public Diary(long id, String name){
+
+    public DiaryResponse(long id, String name){
         this.id = id;
         this.name = name;
     }
-
 
     public long getId(){
         return id;
@@ -17,5 +20,5 @@ public class Diary {
     public String getName(){
         return name;
     }
-}
 
+}

@@ -1,4 +1,4 @@
-package org.sopt.Diary.api;
+package org.sopt.Diary.dto;
 import java.util.List;
 public class DiaryListResponse {
     private final List<DiaryResponse> diaryList;
@@ -8,6 +8,7 @@ public class DiaryListResponse {
     }
 
     public List<DiaryResponse> getDiaryList() {
+
         return diaryList;
     }
 }
