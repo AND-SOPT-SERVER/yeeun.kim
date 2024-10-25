@@ -9,6 +9,7 @@ import org.sopt.Diary.service.DiaryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +26,15 @@ public class DiaryController {
     void post(@RequestBody DiaryRequest diaryRequest) {
         String name = diaryRequest.getName();
         String content = diaryRequest.getContent();
+
         if (name.length() > 30) {
-            throw new IllegalArgumentException("일기 글자수는 최대 30자까지 가능합니다.");
+            // 400 Bad Request를 반환하면서 에러 메시지를 전달
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "일기 글자 수는 최대 30자까지 가능합니다.");
+        }
+
+        if (content.length() > 30) {
+            // 400 Bad Request를 반환하면서 에러 메시지를 전달
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "일기 글자 수는 최대 30자까지 가능합니다.");
         }
 
         diaryService.createDiary(name, content);
@@ -61,7 +69,20 @@ public class DiaryController {
     }
 
     @PatchMapping("/api/diary/{id}")
-   public ResponseEntity<Void> updateDiary(@PathVariable long id, @RequestBody DiaryRequest diaryRequest) {
+    public ResponseEntity<Void> updateDiary(@PathVariable long id, @RequestBody DiaryRequest diaryRequest) {
+        String name = diaryRequest.getName();
+        String content = diaryRequest.getContent();
+
+        if (name.length() > 30) {
+            // 400 Bad Request를 반환하면서 에러 메시지를 전달
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "일기 글자 수는 최대 30자까지 가능합니다.");
+        }
+
+        if (content.length() > 30) {
+            // 400 Bad Request를 반환하면서 에러 메시지를 전달
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "일기 글자 수는 최대 30자까지 가능합니다.");
+        }
+
         try {
             diaryService.updateDiary(id, diaryRequest);
             return ResponseEntity.noContent().build(); // 204 No Content 응답
@@ -69,7 +90,6 @@ public class DiaryController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // 404 Not Found 응답
         }
     }
-
     @DeleteMapping("/api/diary/{id}")
     public ResponseEntity<Void> deleteDiary(@PathVariable long id) {
         diaryService.deleteDiary(id);
