@@ -7,8 +7,10 @@ import org.sopt.Diary.dto.request.DiaryDetailDto;
 import org.sopt.Diary.dto.request.DiaryPostDto;
 import org.sopt.Diary.dto.request.DiaryUpdateDto;
 import org.sopt.Diary.dto.response.DiaryDetailResponse;
-import org.sopt.Diary.dto.request.DiaryRequest;
 import org.sopt.Diary.dto.response.DiaryResponse;
+import org.sopt.Diary.exception.DiaryNotFoundException;
+import org.sopt.Diary.exception.DuplicateTitleException;
+import org.sopt.Diary.exception.LimitTimeException;
 import org.sopt.Diary.repository.DiaryEntity;
 import org.sopt.Diary.repository.DiaryRepository;
 import org.springframework.data.domain.PageRequest;
@@ -17,9 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static java.time.LocalDateTime.now;
 
@@ -36,15 +36,12 @@ public class DiaryService {
     public String createDiary(DiaryPostDto diaryPostDto) {
         LocalDateTime now = now();
 
-        // 5분이 경과했는지 확인
         if (lastDiaryCreatedAt != null && lastDiaryCreatedAt.plusMinutes(5).isAfter(now)) {
-            throw new IllegalArgumentException("5분에 하나의 일기만 작성할 수 있습니다.");
+            throw new LimitTimeException("5분에 하나의 일기만 작성할 수 있습니다.");
         }
 
-        // 중복된 제목 확인
-        Optional<DiaryEntity> existingDiary = diaryRepository.findByTitle(diaryPostDto.getTitle());
-        if (existingDiary.isPresent()) {
-            throw new IllegalArgumentException("중복된 제목입니다.");
+        if (diaryRepository.findByTitle(diaryPostDto.getTitle()).isPresent()) {
+            throw new DuplicateTitleException("일기의 제목이 중복됩니다.");
         }
 
         // DiaryEntity를 빌더 패턴으로 생성
@@ -82,7 +79,7 @@ public class DiaryService {
     // 일기장 상세조회
     public DiaryDetailResponse getDiaryById(long id) {
         DiaryEntity diaryEntity = diaryRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 일기가 존재하지 않습니다."));
+                .orElseThrow(() -> new DiaryNotFoundException("해당 일기가 존재하지 않습니다."));
 
         return DiaryDetailResponse.builder()
                 .id(diaryEntity.getId())
@@ -93,25 +90,27 @@ public class DiaryService {
     }
 
     @Transactional
-    public void updateDiary(long id, DiaryUpdateDto diaryUpdateDto){
+    public String updateDiary(long id, DiaryUpdateDto diaryUpdateDto){
         LocalDateTime now = LocalDateTime.now();
 
         DiaryEntity diaryEntity = diaryRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 일기가 존재하지 않습니다."));
+                .orElseThrow(() -> new DiaryNotFoundException("해당 일기가 존재하지 않습니다."));
 
         diaryEntity.update(diaryUpdateDto.getTitle(), diaryUpdateDto.getContent(), now);
 
         lastDiaryCreatedAt = now;
+        return "일기를 수정했습니다.";
 
     }
 
 
 
     @Transactional
-    public void deleteDiary(long id){
+    public String deleteDiary(long id){
         DiaryEntity diaryEntity = diaryRepository.findById(id)
-                        .orElseThrow(() -> new IllegalArgumentException("해당 일기가 존재하지 않습니다."));
+                        .orElseThrow(() -> new DiaryNotFoundException("해당 일기가 존재하지 않습니다."));
         diaryRepository.delete(diaryEntity);
+        return "일기를 삭제했습니다.";
 
     }
 
