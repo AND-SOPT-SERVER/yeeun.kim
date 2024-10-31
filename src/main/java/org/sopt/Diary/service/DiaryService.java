@@ -40,6 +40,12 @@ public class DiaryService {
             throw new IllegalArgumentException("일기 글자수는 최대 30자까지 가능합니다.");
         }
 
+        Optional<DiaryEntity> existingDiary = diaryRepository.findByName(name);
+        if (existingDiary.isPresent()) {
+            throw new IllegalArgumentException("중복된 이름입니다.");
+        }
+
+
         diaryRepository.save(
                 new DiaryEntity(name, content));
                 lastDiaryCreatedAt = LocalDateTime.now();
