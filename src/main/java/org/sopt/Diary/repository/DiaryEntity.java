@@ -3,7 +3,9 @@ package org.sopt.Diary.repository;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import jakarta.persistence.*;
 
+
 import java.time.LocalDateTime;
+
 
 @Entity
 public class DiaryEntity {

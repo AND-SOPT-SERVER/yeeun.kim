@@ -10,14 +10,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @Component
 public class DiaryService {
 
     private final DiaryRepository diaryRepository;
+    private LocalDateTime lastDiaryCreatedAt = null; // 마지막 일기 작성 시간
 
     public DiaryService(DiaryRepository diaryRepository){
         this.diaryRepository = diaryRepository;
@@ -25,12 +28,21 @@ public class DiaryService {
 
     public void createDiary(String name, String content){
 
-        // 이름이 30자를 초과할 경우, 예외를 발생시킴
-        if (name.length() > 30) {
+        LocalDateTime now = LocalDateTime.now();
+
+         // 마지막 작성 시간과 비교하여 5분이 경과했는지 확인
+        if (lastDiaryCreatedAt != null && lastDiaryCreatedAt.plusMinutes(5).isAfter(LocalDateTime.now())) {
+            throw new IllegalArgumentException("5분에 하나의 일기만 작성할 수 있습니다.");
+        }
+
+        // 일기 글자 수가 30자를 초과할 경우, 예외를 발생시킴
+        if (name.length() > 30 || content.length() > 30) {
             throw new IllegalArgumentException("일기 글자수는 최대 30자까지 가능합니다.");
         }
+
         diaryRepository.save(
                 new DiaryEntity(name, content));
+                lastDiaryCreatedAt = LocalDateTime.now();
 
     }
 

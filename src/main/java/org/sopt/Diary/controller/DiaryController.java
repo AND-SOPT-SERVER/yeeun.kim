@@ -23,23 +23,17 @@ public class DiaryController {
     }
 
     @PostMapping("/api/diary")
-    void post(@RequestBody DiaryRequest diaryRequest) {
-        String name = diaryRequest.getName();
-        String content = diaryRequest.getContent();
-
-        if (name.length() > 30) {
-            // 400 Bad Request를 반환하면서 에러 메시지를 전달
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "일기 글자 수는 최대 30자까지 가능합니다.");
+    public ResponseEntity<Void> post(@RequestBody DiaryRequest diaryRequest) {
+        try {
+            diaryService.createDiary(diaryRequest.getName(), diaryRequest.getContent());
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(null);
         }
-
-        if (content.length() > 30) {
-            // 400 Bad Request를 반환하면서 에러 메시지를 전달
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "일기 글자 수는 최대 30자까지 가능합니다.");
-        }
-
-        diaryService.createDiary(name, content);
     }
-    
+
+
     // 10개만 조회
     @GetMapping("/api/diary")
     ResponseEntity<DiaryListResponse> get() {
