@@ -7,6 +7,6 @@ import java.util.Optional;
 
 @Component
 public interface DiaryRepository extends JpaRepository<DiaryEntity, Long> {
-    Optional<DiaryEntity> findByName(String name);
+    Optional<DiaryEntity> findByTitle(String title);
 
 }

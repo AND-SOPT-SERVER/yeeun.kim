@@ -1,9 +1,12 @@
 package org.sopt.Diary.controller;
 
-import org.sopt.Diary.dto.DiaryDetailResponse;
-import org.sopt.Diary.dto.DiaryListResponse;
-import org.sopt.Diary.dto.DiaryResponse;
-import org.sopt.Diary.dto.DiaryRequest;
+import lombok.RequiredArgsConstructor;
+import org.sopt.Diary.dto.request.DiaryPostDto;
+import org.sopt.Diary.dto.request.DiaryUpdateDto;
+import org.sopt.Diary.dto.response.DiaryDetailResponse;
+import org.sopt.Diary.dto.response.DiaryListResponse;
+import org.sopt.Diary.dto.response.DiaryResponse;
+import org.sopt.Diary.dto.request.DiaryRequest;
 import org.sopt.Diary.domain.Diary;
 import org.sopt.Diary.service.DiaryService;
 import org.springframework.http.HttpStatus;
@@ -15,41 +18,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
+@RequestMapping("/api")
 public class DiaryController {
     private final DiaryService diaryService;
 
-    public DiaryController(DiaryService diaryService) {
-        this.diaryService = diaryService;
-    }
-
-    @PostMapping("/api/diary")
-    public ResponseEntity<Void> post(@RequestBody DiaryRequest diaryRequest) {
+    @PostMapping("/diary")
+    public ResponseEntity<String> createDiary(@RequestBody DiaryPostDto diaryPostDto) {
         try {
-            diaryService.createDiary(diaryRequest.getName(), diaryRequest.getContent());
-            return ResponseEntity.status(HttpStatus.CREATED).build();
+            String result = diaryService.createDiary(diaryPostDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(result);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(null);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
+    // 최신순으로 10개만 조회
+    @GetMapping("/diary")
+    public ResponseEntity<DiaryListResponse> get() {
+        // (1) Service로부터 최신순으로 정렬된 DiaryResponse 리스트 10개를 가져옴
+        List<DiaryResponse> diaryResponseList = diaryService.getList();
 
-    // 10개만 조회
-    @GetMapping("/api/diary")
-    ResponseEntity<DiaryListResponse> get() {
-        // (1)Serice로 부터 가져온 DiaryList
-        List<Diary> diaryList = diaryService.getList();
-
-        // (2) Client와 협의한 interface를 가져옴
-        List<DiaryResponse> diaryResponseList = new ArrayList<>();
-        for (Diary diary : diaryList) {
-            diaryResponseList.add(new DiaryResponse(diary.getId(), diary.getName()));
-        }
-        return ResponseEntity.ok(new DiaryListResponse(diaryResponseList));
+        // (2) DiaryListResponse로 감싸서 클라이언트에게 응답 반환
+        DiaryListResponse diaryListResponse = new DiaryListResponse(diaryResponseList);
+        return ResponseEntity.ok(diaryListResponse);
     }
 
     // 상세조회
-    @GetMapping("/api/diary/{id}")
+    @GetMapping("/diary/{id}")
     public ResponseEntity<DiaryDetailResponse> getDiary(@PathVariable long id) {
         try {
             DiaryDetailResponse diaryDetail = diaryService.getDiaryById(id);
@@ -62,29 +58,28 @@ public class DiaryController {
 
     }
 
-    @PatchMapping("/api/diary/{id}")
-    public ResponseEntity<Void> updateDiary(@PathVariable long id, @RequestBody DiaryRequest diaryRequest) {
-        String name = diaryRequest.getName();
-        String content = diaryRequest.getContent();
+    @PatchMapping("/diary/{id}")
+    public ResponseEntity<Void> updateDiary(@PathVariable long id, @RequestBody DiaryUpdateDto diaryUpdateDto) {
+        String title = diaryUpdateDto.getTitle();
+        String content = diaryUpdateDto.getContent();
 
-        if (name.length() > 30) {
-            // 400 Bad Request를 반환하면서 에러 메시지를 전달
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "일기 글자 수는 최대 30자까지 가능합니다.");
+        // 제목과 내용의 길이 유효성 검사
+        if (title != null && title.length() > 10) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "일기 제목은 최대 10자까지 가능합니다.");
         }
-
-        if (content.length() > 30) {
-            // 400 Bad Request를 반환하면서 에러 메시지를 전달
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "일기 글자 수는 최대 30자까지 가능합니다.");
+        if (content != null && content.length() > 30) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "일기 내용은 최대 30자까지 가능합니다.");
         }
 
         try {
-            diaryService.updateDiary(id, diaryRequest);
+            diaryService.updateDiary(id, diaryUpdateDto);
             return ResponseEntity.noContent().build(); // 204 No Content 응답
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // 404 Not Found 응답
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 일기가 존재하지 않습니다.");
         }
     }
-    @DeleteMapping("/api/diary/{id}")
+
+    @DeleteMapping("/diary/{id}")
     public ResponseEntity<Void> deleteDiary(@PathVariable long id) {
         diaryService.deleteDiary(id);
         return ResponseEntity.noContent().build();

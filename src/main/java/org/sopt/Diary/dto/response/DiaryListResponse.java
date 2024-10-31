@@ -1,5 +1,13 @@
-package org.sopt.Diary.dto;
+package org.sopt.Diary.dto.response;
+
+import lombok.Builder;
+import lombok.Getter;
+
+
 import java.util.List;
+
+@Builder
+@Getter
 public class DiaryListResponse {
     private final List<DiaryResponse> diaryList;
 

@@ -4,13 +4,13 @@ import java.time.LocalDateTime;
 
 public class Diary {
     private long id;
-    private String name;
+    private String title;
     private String content;
     private LocalDateTime createdAt;
 
-    public Diary(long id, String name, String content, LocalDateTime createdAt){
+    public Diary(long id, String title, String content, LocalDateTime createdAt){
         this.id = id;
-        this.name = name;
+        this.title = title;
         this.content = content;
         this.createdAt = createdAt;
     }
@@ -20,8 +20,8 @@ public class Diary {
         return id;
     }
 
-    public String getName(){
-        return name;
+    public String getTitle(){
+        return title;
     }
 
     public String getContent(){
