@@ -27,18 +27,30 @@ public class DiaryEntity {
     @Column(name = "content")
     public String content;
 
-    @Column(name = "createdAt")
+    @Column(name = "date")
     private LocalDateTime createdAt; // 생성일자 추가
 
-    public void update(String title, String content, LocalDateTime createdAt) {
+
+    @Column(name= "is_visible")
+    private boolean isVisible;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "category")
+    private Category category;
+
+    public void update(String title, String content, LocalDateTime createdAt, boolean isVisible, Category category) {
         this.title = title;
         this.content = content;
         this.createdAt = createdAt;
+        this.isVisible = isVisible;
+        this.category = category;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private UserEntity user;
+
+
+//    @ManyToOne
+//    @JoinColumn(name = "user_id")
+//    private UserEntity user;
 
 
 

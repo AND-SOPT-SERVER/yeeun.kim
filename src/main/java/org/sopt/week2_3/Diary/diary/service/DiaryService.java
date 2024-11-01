@@ -47,6 +47,8 @@ public class DiaryService {
                 .title(diaryPostDto.getTitle())
                 .content(diaryPostDto.getContent())
                 .createdAt(now) // 작성 시간을 설정
+                .isVisible(diaryPostDto.isVisible())
+                .category(diaryPostDto.getCategory())
                 .build();
 
         diaryRepository.save(diary);
@@ -84,6 +86,8 @@ public class DiaryService {
                 .title(diaryEntity.getTitle())
                 .content(diaryEntity.getContent())
                 .createdAt(diaryEntity.getCreatedAt())
+                .isVisible(diaryEntity.isVisible())
+                .category(diaryEntity.getCategory())
                 .build();
     }
 
@@ -94,13 +98,12 @@ public class DiaryService {
         DiaryEntity diaryEntity = diaryRepository.findById(id)
                 .orElseThrow(() -> new DiaryNotFoundException("해당 일기가 존재하지 않습니다."));
 
-        diaryEntity.update(diaryUpdateDto.getTitle(), diaryUpdateDto.getContent(), now);
+        diaryEntity.update(diaryUpdateDto.getTitle(), diaryUpdateDto.getContent(), now, diaryUpdateDto.isVisible(), diaryUpdateDto.getCategory());
 
         lastDiaryCreatedAt = now;
         return "일기를 수정했습니다.";
 
     }
-
 
 
     @Transactional

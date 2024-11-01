@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.sopt.week2_3.Diary.diary.repository.Category;
 
 import java.time.LocalDateTime;
 
@@ -27,8 +28,14 @@ public class DiaryUpdateDto {
     @Size(min = 1 ,max = 30, message = "일기의 제목은 최소 1글자, 최대 30글자까지 가능합니다.")
     public String content;
 
-    @Column
+
     private LocalDateTime createdAt; // 생성일자 추가
+
+    private boolean isVisible;
+
+    private Category category;
+
+
 
 
 }

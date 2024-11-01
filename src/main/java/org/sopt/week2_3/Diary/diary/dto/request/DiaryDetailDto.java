@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.sopt.week2_3.Diary.diary.repository.Category;
 
 import java.time.LocalDateTime;
 
@@ -28,4 +29,8 @@ public class DiaryDetailDto {
     public String content;
 
     private LocalDateTime createdAt; // 생성일자 추가
+
+    private boolean isVisible;
+
+    private Category category;
 }

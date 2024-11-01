@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.sopt.week2_3.Diary.diary.repository.Category;
 
 import java.time.LocalDateTime;
 
@@ -17,6 +18,7 @@ public class DiaryDetailResponse {
     private String title;
     private String content;
     private LocalDateTime createdAt;
-
+    private boolean isVisible;
+    private Category category;
 
 }

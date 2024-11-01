@@ -38,6 +38,6 @@ public class UserEntity {
 
     }
 
-    @OneToMany(mappedBy = "user")
-    private List<DiaryEntity> diaries;
+//    @OneToMany(mappedBy = "user")
+//    private List<DiaryEntity> diaries;
 }
