@@ -29,5 +29,15 @@ public class UserController {
         }
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<UserResponseDto> loginUser(@Valid @RequestBody UserLoginRequestDto userLoginRequestDto) {
+        try {
+            UserResponseDto userResponse = userService.loginUser(userLoginRequestDto);
+            return ResponseEntity.ok(userResponse);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+    }
+
 
 }

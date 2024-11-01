@@ -36,5 +36,19 @@ public class UserService {
                 .build();
     }
 
+    @Transactional
+    public UserResponseDto loginUser(UserLoginRequestDto userLoginRequestDto) {
+        UserEntity user = userRepository.findByUsername(userLoginRequestDto.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
+        if (!userLoginRequestDto.getPassword().equals(user.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+
+        return UserResponseDto.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .usernickname(user.getUsernickname())
+                .build();
+    }
 }
