@@ -1,4 +1,4 @@
-package org.sopt.Diary.dto.request;
+package org.sopt.week2_3.Diary.diary.dto.request;
 
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;

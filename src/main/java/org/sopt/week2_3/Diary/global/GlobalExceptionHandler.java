@@ -1,8 +1,8 @@
-package org.sopt.Diary.controller;
+package org.sopt.week2_3.Diary.global;
 
-import org.sopt.Diary.exception.DiaryNotFoundException;
-import org.sopt.Diary.exception.DuplicateTitleException;
-import org.sopt.Diary.exception.LimitTimeException;
+import org.sopt.week2_3.Diary.exception.DiaryNotFoundException;
+import org.sopt.week2_3.Diary.exception.DuplicateTitleException;
+import org.sopt.week2_3.Diary.exception.LimitTimeException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;

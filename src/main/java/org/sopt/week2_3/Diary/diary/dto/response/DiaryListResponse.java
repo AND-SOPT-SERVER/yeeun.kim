@@ -1,4 +1,4 @@
-package org.sopt.Diary.dto.response;
+package org.sopt.week2_3.Diary.diary.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;

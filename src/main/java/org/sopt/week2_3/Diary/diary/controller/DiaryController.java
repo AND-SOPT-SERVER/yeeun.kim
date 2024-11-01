@@ -1,14 +1,14 @@
-package org.sopt.Diary.controller;
+package org.sopt.week2_3.Diary.diary.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.sopt.Diary.dto.request.DiaryPostDto;
-import org.sopt.Diary.dto.request.DiaryUpdateDto;
-import org.sopt.Diary.dto.response.DiaryDetailResponse;
-import org.sopt.Diary.dto.response.DiaryListResponse;
-import org.sopt.Diary.dto.response.DiaryResponse;
-import org.sopt.Diary.exception.DiaryNotFoundException;
-import org.sopt.Diary.service.DiaryService;
+import org.sopt.week2_3.Diary.diary.dto.request.DiaryPostDto;
+import org.sopt.week2_3.Diary.diary.dto.request.DiaryUpdateDto;
+import org.sopt.week2_3.Diary.diary.dto.response.DiaryDetailResponse;
+import org.sopt.week2_3.Diary.diary.dto.response.DiaryListResponse;
+import org.sopt.week2_3.Diary.diary.dto.response.DiaryResponse;
+import org.sopt.week2_3.Diary.exception.DiaryNotFoundException;
+import org.sopt.week2_3.Diary.diary.service.DiaryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
