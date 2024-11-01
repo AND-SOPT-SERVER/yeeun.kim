@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.sopt.week2_3.Diary.diary.repository.DiaryEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -14,14 +15,14 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "user")
+@Table(name = "users")
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name= "id")
     public long id;
 
-    @Column(name = "username", nullable = false)
+    @Column(name = "username", nullable = false, unique = true)
     String username;
 
     @Column(name = "password", nullable = false)
@@ -38,6 +39,6 @@ public class UserEntity {
 
     }
 
-//    @OneToMany(mappedBy = "user")
-//    private List<DiaryEntity> diaries;
+    @OneToMany(mappedBy = "user")
+    private List<DiaryEntity> diaries = new ArrayList<>();
 }
