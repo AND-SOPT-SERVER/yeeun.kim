@@ -29,6 +29,8 @@ public class DiaryPostDto {
 
     private Category category;
 
+    private long userId;
+
 
 
 }

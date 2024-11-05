@@ -43,6 +43,17 @@ public class DiaryController {
         return ResponseEntity.ok(diaryListResponse);
     }
 
+    // 내 일기 조회
+    @GetMapping("/diary/me/{userId}")
+    public ResponseEntity<DiaryListResponse> getMyDiaries(@PathVariable long userId) {
+        // Service로부터 해당 사용자의 DiaryResponse 리스트를 가져옴
+        List<DiaryResponse> diaryResponseList = diaryService.getDiariesByUserId(userId);
+
+        // DiaryListResponse로 감싸서 클라이언트에게 응답 반환
+        DiaryListResponse diaryListResponse = new DiaryListResponse(diaryResponseList);
+        return ResponseEntity.ok(diaryListResponse);
+    }
+
     // 상세조회
     @GetMapping("/diary/{id}")
     public ResponseEntity<DiaryDetailResponse> getDiary(@PathVariable long id) {

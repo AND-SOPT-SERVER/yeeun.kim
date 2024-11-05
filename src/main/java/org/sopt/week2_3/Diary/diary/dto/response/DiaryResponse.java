@@ -14,6 +14,7 @@ public class DiaryResponse {
 
     public long id;
     private String title;
+    private long userId;
 
 
 }

@@ -24,7 +24,7 @@ public class UserService {
         UserEntity user = UserEntity.builder()
                 .username(userRegisterRequestDto.getUsername())
                 .password(userRegisterRequestDto.getPassword())
-                .usernickname(userRegisterRequestDto.getUsernickname())
+                .nickname(userRegisterRequestDto.getNickname())
                 .build();
 
         UserEntity savedUser = userRepository.save(user);
@@ -32,7 +32,7 @@ public class UserService {
         return UserResponseDto.builder()
                 .id(savedUser.getId())
                 .username(savedUser.getUsername())
-                .usernickname(savedUser.getUsernickname())
+                .nickname(savedUser.getNickname())
                 .build();
     }
 
@@ -48,7 +48,7 @@ public class UserService {
         return UserResponseDto.builder()
                 .id(user.getId())
                 .username(user.getUsername())
-                .usernickname(user.getUsernickname())
+                .nickname(user.getNickname())
                 .build();
     }
 }

@@ -11,6 +11,8 @@ import org.sopt.week2_3.Diary.exception.DuplicateTitleException;
 import org.sopt.week2_3.Diary.exception.LimitTimeException;
 import org.sopt.week2_3.Diary.diary.repository.DiaryEntity;
 import org.sopt.week2_3.Diary.diary.repository.DiaryRepository;
+import org.sopt.week2_3.Diary.user.repository.UserEntity;
+import org.sopt.week2_3.Diary.user.repository.UserRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -28,6 +30,8 @@ import static java.time.LocalDateTime.now;
 public class DiaryService {
 
     private final DiaryRepository diaryRepository;
+    private final UserRepository userRepository;
+
     private LocalDateTime lastDiaryCreatedAt = null; // 마지막 일기 작성 시간
 
     @Transactional
@@ -42,6 +46,14 @@ public class DiaryService {
             throw new DuplicateTitleException("일기의 제목이 중복됩니다.");
         }
 
+        if (diaryPostDto.getUserId() == 0) {
+            throw new IllegalArgumentException("userId는 필수 항목입니다.");
+        }
+
+        UserEntity user = userRepository.findById(diaryPostDto.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+
+
         // DiaryEntity를 빌더 패턴으로 생성
         DiaryEntity diary = DiaryEntity.builder()
                 .title(diaryPostDto.getTitle())
@@ -49,6 +61,7 @@ public class DiaryService {
                 .createdAt(now) // 작성 시간을 설정
                 .isVisible(diaryPostDto.isVisible())
                 .category(diaryPostDto.getCategory())
+                .user(user)
                 .build();
 
         diaryRepository.save(diary);
@@ -75,6 +88,24 @@ public class DiaryService {
 
         return diaryResponseList;
     }
+
+    // 내 일기 모아보기
+    public List<DiaryResponse> getDiariesByUserId(long userId) {
+        // 사용자 ID로 작성된 일기 중 최신순으로 정렬하여 10개만 가져옴
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
+        List<DiaryEntity> diaryEntityList = diaryRepository.findByUserId(userId, pageable);
+
+        // DiaryEntity를 DiaryResponse로 변환하는 작업
+        List<DiaryResponse> diaryResponseList = new ArrayList<>();
+        for (DiaryEntity diaryEntity : diaryEntityList) {
+            diaryResponseList.add(DiaryResponse.builder()
+                    .id(diaryEntity.getId())
+                    .title(diaryEntity.getTitle())
+                    .build());
+        }
+        return diaryResponseList;
+    }
+
 
     // 일기장 상세조회
     public DiaryDetailResponse getDiaryById(long id) {

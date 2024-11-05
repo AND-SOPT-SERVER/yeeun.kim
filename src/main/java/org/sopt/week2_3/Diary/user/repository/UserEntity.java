@@ -1,5 +1,6 @@
 package org.sopt.week2_3.Diary.user.repository;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +16,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "users")
+@Table(name = "user")
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,17 +29,19 @@ public class UserEntity {
     @Column(name = "password", nullable = false)
     String password;
 
-    @Column(name = "usernickname", nullable = false)
-    String usernickname;
+    @Column(name = "nickname", nullable = false)
+    String nickname;
 
 
-    public void update(String username, String password, String usernickname){
+    public void update(String username, String password, String nickname){
         this.username = username;
         this.password = password;
-        this.usernickname = usernickname;
+        this.nickname = nickname;
 
     }
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<DiaryEntity> diaries = new ArrayList<>();
+
 }

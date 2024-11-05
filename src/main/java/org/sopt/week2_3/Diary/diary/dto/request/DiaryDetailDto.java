@@ -33,4 +33,6 @@ public class DiaryDetailDto {
     private boolean isVisible;
 
     private Category category;
+
+    private long userId;
 }

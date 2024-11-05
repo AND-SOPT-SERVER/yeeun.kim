@@ -14,5 +14,5 @@ public class UserRegisterRequestDto {
 
     private String password;
 
-    private String usernickname;
+    private String nickname;
 }

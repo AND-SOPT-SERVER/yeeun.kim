@@ -35,6 +35,8 @@ public class DiaryUpdateDto {
 
     private Category category;
 
+    private long userId;
+
 
 
 
