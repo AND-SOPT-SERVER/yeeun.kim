@@ -110,25 +110,26 @@ public class DiaryService {
     }
 
 
+    // 내 일기 모아보기 + 정렬
+    public List<DiaryResponse> getDiariesByUserIdAndCategoryAndSort(long userId, Category category, String sort) {
+        // 페이지 요청 객체 생성 (카테고리와 정렬 기준에 맞춰 10개씩 조회)
+        Pageable pageable = PageRequest.of(0, 10);
 
+        // 카테고리와 정렬 기준에 맞는 일기 목록을 조회
+        List<DiaryEntity> diaryEntityList = diaryRepository.findByUserIdAndCategoryAndSort(category, userId, sort, pageable);
 
-    // 내 일기 모아보기
-    public List<DiaryResponse> getDiariesByUserId(long userId) {
-        // 사용자 ID로 작성된 일기 중 최신순으로 정렬하여 10개만 가져옴
-        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
-        List<DiaryEntity> diaryEntityList = diaryRepository.findByUserId(userId, pageable);
-
-        // DiaryEntity를 DiaryResponse로 변환하는 작업
+        // DiaryEntity를 DiaryResponse로 변환
         List<DiaryResponse> diaryResponseList = new ArrayList<>();
         for (DiaryEntity diaryEntity : diaryEntityList) {
             diaryResponseList.add(DiaryResponse.builder()
                     .id(diaryEntity.getId())
                     .title(diaryEntity.getTitle())
+                    .content(diaryEntity.getContent())
+                    .createdAt(diaryEntity.getCreatedAt())
                     .build());
         }
         return diaryResponseList;
     }
-
 
 
     // 일기장 상세조회

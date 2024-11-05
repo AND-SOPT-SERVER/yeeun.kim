@@ -48,11 +48,15 @@ public class DiaryController {
     }
 
 
-    // 내 일기 조회
+    // 내 일기 조회 + 정렬
     @GetMapping("/diary/me/{userId}")
-    public ResponseEntity<DiaryListResponse> getMyDiaries(@PathVariable long userId) {
-        // Service로부터 해당 사용자의 DiaryResponse 리스트를 가져옴
-        List<DiaryResponse> diaryResponseList = diaryService.getDiariesByUserId(userId);
+    public ResponseEntity<DiaryListResponse> getMyDiariesByCategory(
+            @PathVariable long userId,
+            @RequestParam Category category,
+            @RequestParam(defaultValue = "createdAt") String sort) {
+
+        // Service로부터 카테고리 및 정렬 기준에 맞는 DiaryResponse 리스트를 가져옴
+        List<DiaryResponse> diaryResponseList = diaryService.getDiariesByUserIdAndCategoryAndSort(userId, category, sort);
 
         // DiaryListResponse로 감싸서 클라이언트에게 응답 반환
         DiaryListResponse diaryListResponse = new DiaryListResponse(diaryResponseList);
