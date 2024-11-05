@@ -14,6 +14,7 @@ import org.sopt.week2_3.Diary.diary.repository.DiaryEntity;
 import org.sopt.week2_3.Diary.diary.repository.DiaryRepository;
 import org.sopt.week2_3.Diary.user.repository.UserEntity;
 import org.sopt.week2_3.Diary.user.repository.UserRepository;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.time.LocalDateTime.now;
 
@@ -91,47 +93,42 @@ public class DiaryService {
         return diaryResponseList;
     }
 
-    // 정렬 반영한 전체조회
-    public List<DiaryResponse> getDiariesByCategoryAndSort(Category category, String sort) {
-        Pageable pageable = PageRequest.of(0, 10);  // 10개씩 조회
+    // 정렬 반영한 전체조회 + 페이지네이션
+    public List<DiaryResponse> getDiariesByCategoryAndSort(Category category, String sort, int page, int size) {
+        Sort sortOption = sort.equalsIgnoreCase("order") ? Sort.by(Sort.Direction.DESC, "content.length") : Sort.by(Sort.Direction.DESC, "createdAt");
+        Pageable pageable = PageRequest.of(page, size, sortOption);
 
-        List<DiaryEntity> diaryEntityList = diaryRepository.findByCategoryAndSort(category, sort, pageable);
-
-        List<DiaryResponse> diaryResponseList = new ArrayList<>();
-        for (DiaryEntity diaryEntity : diaryEntityList) {
-            diaryResponseList.add(DiaryResponse.builder()
-                    .id(diaryEntity.getId())
-                    .title(diaryEntity.getTitle())
-                    .content(diaryEntity.getContent())
-                    .createdAt(diaryEntity.getCreatedAt())
-                    .build());
-        }
-        return diaryResponseList;
+        Page<DiaryEntity> diaryPage = diaryRepository.findByCategoryAndSort(category, sort, pageable);
+        return diaryPage.getContent().stream()
+                .map(diaryEntity -> DiaryResponse.builder()
+                        .id(diaryEntity.getId())
+                        .title(diaryEntity.getTitle())
+                        .content(diaryEntity.getContent())
+                        .createdAt(diaryEntity.getCreatedAt())
+                        .build())
+                .collect(Collectors.toList());
     }
 
+    // 내 일기 모아보기 + 정렬 + 페이지네이션
+    public List<DiaryResponse> getDiariesByUserIdAndCategoryAndSort(long userId, Category category, String sort, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<DiaryEntity> diaryEntities;
 
-    // 내 일기 모아보기 + 정렬
-    public List<DiaryResponse> getDiariesByUserIdAndCategoryAndSort(long userId, Category category, String sort) {
-        // 페이지 요청 객체 생성 (카테고리와 정렬 기준에 맞춰 10개씩 조회)
-        Pageable pageable = PageRequest.of(0, 10);
-
-        // 카테고리와 정렬 기준에 맞는 일기 목록을 조회
-        List<DiaryEntity> diaryEntityList = diaryRepository.findByUserIdAndCategoryAndSort(category, userId, sort, pageable);
-
-        // DiaryEntity를 DiaryResponse로 변환
-        List<DiaryResponse> diaryResponseList = new ArrayList<>();
-        for (DiaryEntity diaryEntity : diaryEntityList) {
-            diaryResponseList.add(DiaryResponse.builder()
-                    .id(diaryEntity.getId())
-                    .title(diaryEntity.getTitle())
-                    .content(diaryEntity.getContent())
-                    .createdAt(diaryEntity.getCreatedAt())
-                    .build());
+        if ("order".equals(sort)) {
+            diaryEntities = diaryRepository.findByUserIdAndCategoryOrderByContentLengthDesc(userId, category, pageable);
+        } else {
+            diaryEntities = diaryRepository.findByUserIdAndCategoryOrderByCreatedAtDesc(userId, category, pageable);
         }
-        return diaryResponseList;
+
+        return diaryEntities.stream().map(diaryEntity -> DiaryResponse.builder()
+                        .id(diaryEntity.getId())
+                        .title(diaryEntity.getTitle())
+                        .content(diaryEntity.getContent())
+                        .createdAt(diaryEntity.getCreatedAt())
+                        .userId(diaryEntity.getUser().getId())
+                        .build())
+                .collect(Collectors.toList());
     }
-
-
     // 일기장 상세조회
     public DiaryDetailResponse getDiaryById(long id) {
         DiaryEntity diaryEntity = diaryRepository.findById(id)

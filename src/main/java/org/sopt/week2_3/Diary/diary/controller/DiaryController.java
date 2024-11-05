@@ -33,32 +33,29 @@ public class DiaryController {
         }
     }
 
-    // 카테고리와 정렬 기준에 따라 일기 조회
+    // 카테고리와 정렬 기준에 따라 일기 조회 + 페이지네이션
     @GetMapping("/diary")
     public ResponseEntity<DiaryListResponse> getDiariesByCategory(
             @RequestParam Category category,
-            @RequestParam(defaultValue = "createdAt") String sort) {
-
-        // Service로부터 카테고리 및 정렬 기준에 맞는 DiaryResponse 리스트를 가져옴
-        List<DiaryResponse> diaryResponseList = diaryService.getDiariesByCategoryAndSort(category, sort);
-
-        // DiaryListResponse로 감싸서 클라이언트에게 응답 반환
+            @RequestParam(defaultValue = "createdAt") String sort,
+            @RequestParam(defaultValue = "0") int page, // 페이지 번호
+            @RequestParam(defaultValue = "10") int size // 페이지 크기
+    ) {
+        List<DiaryResponse> diaryResponseList = diaryService.getDiariesByCategoryAndSort(category, sort, page, size);
         DiaryListResponse diaryListResponse = new DiaryListResponse(diaryResponseList);
         return ResponseEntity.ok(diaryListResponse);
     }
 
-
-    // 내 일기 조회 + 정렬
+    // 내 일기 조회 + 정렬 + 페이지네이션 적용
     @GetMapping("/diary/me/{userId}")
     public ResponseEntity<DiaryListResponse> getMyDiariesByCategory(
             @PathVariable long userId,
             @RequestParam Category category,
-            @RequestParam(defaultValue = "createdAt") String sort) {
-
-        // Service로부터 카테고리 및 정렬 기준에 맞는 DiaryResponse 리스트를 가져옴
-        List<DiaryResponse> diaryResponseList = diaryService.getDiariesByUserIdAndCategoryAndSort(userId, category, sort);
-
-        // DiaryListResponse로 감싸서 클라이언트에게 응답 반환
+            @RequestParam(defaultValue = "createdAt") String sort,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        List<DiaryResponse> diaryResponseList = diaryService.getDiariesByUserIdAndCategoryAndSort(userId, category, sort, page, size);
         DiaryListResponse diaryListResponse = new DiaryListResponse(diaryResponseList);
         return ResponseEntity.ok(diaryListResponse);
     }
