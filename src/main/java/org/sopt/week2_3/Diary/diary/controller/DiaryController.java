@@ -7,6 +7,7 @@ import org.sopt.week2_3.Diary.diary.dto.request.DiaryUpdateDto;
 import org.sopt.week2_3.Diary.diary.dto.response.DiaryDetailResponse;
 import org.sopt.week2_3.Diary.diary.dto.response.DiaryListResponse;
 import org.sopt.week2_3.Diary.diary.dto.response.DiaryResponse;
+import org.sopt.week2_3.Diary.diary.repository.Category;
 import org.sopt.week2_3.Diary.exception.DiaryNotFoundException;
 import org.sopt.week2_3.Diary.diary.service.DiaryService;
 import org.springframework.http.HttpStatus;
@@ -32,16 +33,20 @@ public class DiaryController {
         }
     }
 
-    // 최신순으로 10개만 조회
+    // 카테고리와 정렬 기준에 따라 일기 조회
     @GetMapping("/diary")
-    public ResponseEntity<DiaryListResponse> get() {
-        // (1) Service로부터 최신순으로 정렬된 DiaryResponse 리스트 10개를 가져옴
-        List<DiaryResponse> diaryResponseList = diaryService.getList();
+    public ResponseEntity<DiaryListResponse> getDiariesByCategory(
+            @RequestParam Category category,
+            @RequestParam(defaultValue = "createdAt") String sort) {
 
-        // (2) DiaryListResponse로 감싸서 클라이언트에게 응답 반환
+        // Service로부터 카테고리 및 정렬 기준에 맞는 DiaryResponse 리스트를 가져옴
+        List<DiaryResponse> diaryResponseList = diaryService.getDiariesByCategoryAndSort(category, sort);
+
+        // DiaryListResponse로 감싸서 클라이언트에게 응답 반환
         DiaryListResponse diaryListResponse = new DiaryListResponse(diaryResponseList);
         return ResponseEntity.ok(diaryListResponse);
     }
+
 
     // 내 일기 조회
     @GetMapping("/diary/me/{userId}")

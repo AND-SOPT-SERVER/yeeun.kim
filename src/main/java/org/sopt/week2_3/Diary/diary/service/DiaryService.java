@@ -6,6 +6,7 @@ import org.sopt.week2_3.Diary.diary.dto.request.DiaryPostDto;
 import org.sopt.week2_3.Diary.diary.dto.request.DiaryUpdateDto;
 import org.sopt.week2_3.Diary.diary.dto.response.DiaryDetailResponse;
 import org.sopt.week2_3.Diary.diary.dto.response.DiaryResponse;
+import org.sopt.week2_3.Diary.diary.repository.Category;
 import org.sopt.week2_3.Diary.exception.DiaryNotFoundException;
 import org.sopt.week2_3.Diary.exception.DuplicateTitleException;
 import org.sopt.week2_3.Diary.exception.LimitTimeException;
@@ -70,6 +71,7 @@ public class DiaryService {
         return "일기를 생성했습니다.";
     }
 
+    // 일기 조회
     public List<DiaryResponse> getList() {
         // (1) repository로부터 DiaryEntity를 가져옴 (작성일 기준 내림차순으로 정렬하여 10개까지 조회)
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
@@ -89,6 +91,27 @@ public class DiaryService {
         return diaryResponseList;
     }
 
+    // 정렬 반영한 전체조회
+    public List<DiaryResponse> getDiariesByCategoryAndSort(Category category, String sort) {
+        Pageable pageable = PageRequest.of(0, 10);  // 10개씩 조회
+
+        List<DiaryEntity> diaryEntityList = diaryRepository.findByCategoryAndSort(category, sort, pageable);
+
+        List<DiaryResponse> diaryResponseList = new ArrayList<>();
+        for (DiaryEntity diaryEntity : diaryEntityList) {
+            diaryResponseList.add(DiaryResponse.builder()
+                    .id(diaryEntity.getId())
+                    .title(diaryEntity.getTitle())
+                    .content(diaryEntity.getContent())
+                    .createdAt(diaryEntity.getCreatedAt())
+                    .build());
+        }
+        return diaryResponseList;
+    }
+
+
+
+
     // 내 일기 모아보기
     public List<DiaryResponse> getDiariesByUserId(long userId) {
         // 사용자 ID로 작성된 일기 중 최신순으로 정렬하여 10개만 가져옴
@@ -105,6 +128,7 @@ public class DiaryService {
         }
         return diaryResponseList;
     }
+
 
 
     // 일기장 상세조회
