@@ -1,4 +1,4 @@
-package org.sopt.Diary;
+package org.sopt.week2_3.Diary;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

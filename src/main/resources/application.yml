@@ -1,14 +1,14 @@
 spring:
-    datasource:
-      drover-class-name: org.h2.Driver
-      url: jdbc:h2:mem:testdb
-      username : yeeun
-      password:
-    jpa:
-      show-sql: true
-      hibernate:
-        ddl-auto: create
-        dialect: org.hibernate.dialect.H2Dialect
-      properties:
-        format_sql: true
-        showl_sql: true
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://db-2vfrih-kr.vpc-pub-cdb.ntruss.com:3306/team5
+    username: sopt-35-team5
+    password: 1q2w3e4r12!@
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+      dialect: org.hibernate.dialect.MySQL8Dialect
+    properties:
+      format_sql: true
+      show_sql: true
