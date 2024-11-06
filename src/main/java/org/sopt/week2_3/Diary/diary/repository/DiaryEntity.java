@@ -32,7 +32,7 @@ public class DiaryEntity {
     private LocalDateTime createdAt; // 생성일자 추가
 
 
-    @Column(name= "is_visible")
+    @Column(name = "is_visible", columnDefinition = "TINYINT(1)")
     private boolean isVisible;
 
     @Enumerated(EnumType.STRING)

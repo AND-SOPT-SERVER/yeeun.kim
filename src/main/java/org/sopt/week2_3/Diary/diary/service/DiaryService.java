@@ -36,6 +36,7 @@ public class DiaryService {
     private final UserRepository userRepository;
 
     private LocalDateTime lastDiaryCreatedAt = null; // 마지막 일기 작성 시간
+    private LocalDateTime lastDiaryUpdatedAt = null; // 마지막 일기 수정 시간
 
     @Transactional
     public String createDiary(DiaryPostDto diaryPostDto) {
@@ -68,7 +69,7 @@ public class DiaryService {
                 .build();
 
         diaryRepository.save(diary);
-        lastDiaryCreatedAt = now;
+        lastDiaryCreatedAt = now;   // 마지막 일기 생성 시간 업데이트
 
         return "일기를 생성했습니다.";
     }
@@ -153,7 +154,7 @@ public class DiaryService {
 
         diaryEntity.update(diaryUpdateDto.getTitle(), diaryUpdateDto.getContent(), now, diaryUpdateDto.isVisible(), diaryUpdateDto.getCategory());
 
-        lastDiaryCreatedAt = now;
+        lastDiaryUpdatedAt = now;
         return "일기를 수정했습니다.";
 
     }
